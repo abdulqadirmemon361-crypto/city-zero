@@ -1,4 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
 
 const game = document.getElementById("game");
 
@@ -10,7 +11,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
 
 const camera = new THREE.PerspectiveCamera(
-    68,
+    65,
     window.innerWidth / window.innerHeight,
     0.1,
     500
@@ -21,8 +22,14 @@ const renderer = new THREE.WebGLRenderer({
     powerPreference: "low-power"
 });
 
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 1.25)
+);
 
 game.innerHTML = "";
 game.appendChild(renderer.domElement);
@@ -31,14 +38,18 @@ game.appendChild(renderer.domElement);
 // LIGHT
 // =====================================================
 
-const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+const sun = new THREE.DirectionalLight(
+    0xffffff,
+    2.2
+);
+
 sun.position.set(30, 40, 20);
 scene.add(sun);
 
 const ambient = new THREE.HemisphereLight(
     0xffffff,
-    0x555555,
-    1.4
+    0x444444,
+    1.5
 );
 
 scene.add(ambient);
@@ -55,6 +66,7 @@ const ground = new THREE.Mesh(
 );
 
 ground.rotation.x = -Math.PI / 2;
+
 scene.add(ground);
 
 // =====================================================
@@ -70,10 +82,11 @@ const road = new THREE.Mesh(
 
 road.rotation.x = -Math.PI / 2;
 road.position.y = 0.02;
+
 scene.add(road);
 
 // =====================================================
-// ROAD LINE
+// ROAD LINES
 // =====================================================
 
 const lineMaterial = new THREE.MeshBasicMaterial({
@@ -83,7 +96,7 @@ const lineMaterial = new THREE.MeshBasicMaterial({
 for (let z = -120; z < 120; z += 8) {
 
     const line = new THREE.Mesh(
-        new THREE.PlaneGeometry(0.25, 4),
+        new THREE.PlaneGeometry(0.22, 4),
         lineMaterial
     );
 
@@ -97,14 +110,10 @@ for (let z = -120; z < 120; z += 8) {
 // BUILDINGS
 // =====================================================
 
-function createBuilding(x, z, width, height, depth) {
+function createBuilding(x, z, w, h, d) {
 
     const building = new THREE.Mesh(
-        new THREE.BoxGeometry(
-            width,
-            height,
-            depth
-        ),
+        new THREE.BoxGeometry(w, h, d),
         new THREE.MeshStandardMaterial({
             color: 0x707070
         })
@@ -112,7 +121,7 @@ function createBuilding(x, z, width, height, depth) {
 
     building.position.set(
         x,
-        height / 2,
+        h / 2,
         z
     );
 
@@ -121,380 +130,14 @@ function createBuilding(x, z, width, height, depth) {
 
 createBuilding(-18, -20, 12, 20, 12);
 createBuilding(18, -20, 13, 28, 13);
-
 createBuilding(-18, 20, 10, 15, 10);
 createBuilding(18, 20, 12, 23, 12);
 
 // =====================================================
-// PLAYER
+// PLAYER ROOT
 // =====================================================
 
 const player = new THREE.Group();
-
-function makeMaterial(color) {
-
-    return new THREE.MeshStandardMaterial({
-        color: color
-    });
-}
-
-// =====================================================
-// BODY
-// =====================================================
-
-// Chest
-const chest = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.95,
-        0.9,
-        0.48
-    ),
-    makeMaterial(0x294d8f)
-);
-
-chest.position.y = 1.55;
-player.add(chest);
-
-// Waist
-const waist = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.72,
-        0.35,
-        0.42
-    ),
-    makeMaterial(0x294d8f)
-);
-
-waist.position.y = 1.0;
-player.add(waist);
-
-// =====================================================
-// NECK
-// =====================================================
-
-const neck = new THREE.Mesh(
-    new THREE.CylinderGeometry(
-        0.13,
-        0.15,
-        0.22,
-        10
-    ),
-    makeMaterial(0xc98f68)
-);
-
-neck.position.y = 2.12;
-player.add(neck);
-
-// =====================================================
-// HEAD
-// =====================================================
-
-const head = new THREE.Mesh(
-    new THREE.SphereGeometry(
-        0.40,
-        16,
-        12
-    ),
-    makeMaterial(0xc98f68)
-);
-
-head.scale.set(
-    0.92,
-    1.08,
-    0.92
-);
-
-head.position.y = 2.52;
-player.add(head);
-
-// =====================================================
-// HAIR
-// =====================================================
-
-const hair = new THREE.Mesh(
-    new THREE.SphereGeometry(
-        0.415,
-        16,
-        10
-    ),
-    makeMaterial(0x151515)
-);
-
-hair.scale.set(
-    1,
-    0.48,
-    0.98
-);
-
-hair.position.y = 2.80;
-player.add(hair);
-
-// =====================================================
-// SHOULDERS
-// =====================================================
-
-const shoulderGeometry =
-    new THREE.SphereGeometry(
-        0.22,
-        10,
-        8
-    );
-
-const leftShoulder = new THREE.Mesh(
-    shoulderGeometry,
-    makeMaterial(0x294d8f)
-);
-
-leftShoulder.position.set(
-    -0.55,
-    1.82,
-    0
-);
-
-player.add(leftShoulder);
-
-const rightShoulder = new THREE.Mesh(
-    shoulderGeometry,
-    makeMaterial(0x294d8f)
-);
-
-rightShoulder.position.set(
-    0.55,
-    1.82,
-    0
-);
-
-player.add(rightShoulder);
-
-// =====================================================
-// ARMS
-// =====================================================
-
-const upperArmGeometry =
-    new THREE.CylinderGeometry(
-        0.13,
-        0.15,
-        0.55,
-        8
-    );
-
-const forearmGeometry =
-    new THREE.CylinderGeometry(
-        0.11,
-        0.13,
-        0.52,
-        8
-    );
-
-// LEFT ARM
-
-const leftUpperArm = new THREE.Mesh(
-    upperArmGeometry,
-    makeMaterial(0x294d8f)
-);
-
-leftUpperArm.position.set(
-    -0.65,
-    1.55,
-    0
-);
-
-player.add(leftUpperArm);
-
-const leftForearm = new THREE.Mesh(
-    forearmGeometry,
-    makeMaterial(0xc98f68)
-);
-
-leftForearm.position.set(
-    -0.65,
-    1.10,
-    0
-);
-
-player.add(leftForearm);
-
-// RIGHT ARM
-
-const rightUpperArm = new THREE.Mesh(
-    upperArmGeometry,
-    makeMaterial(0x294d8f)
-);
-
-rightUpperArm.position.set(
-    0.65,
-    1.55,
-    0
-);
-
-player.add(rightUpperArm);
-
-const rightForearm = new THREE.Mesh(
-    forearmGeometry,
-    makeMaterial(0xc98f68)
-);
-
-rightForearm.position.set(
-    0.65,
-    1.10,
-    0
-);
-
-player.add(rightForearm);
-
-// =====================================================
-// HANDS
-// =====================================================
-
-const handGeometry =
-    new THREE.SphereGeometry(
-        0.14,
-        10,
-        8
-    );
-
-const leftHand = new THREE.Mesh(
-    handGeometry,
-    makeMaterial(0xc98f68)
-);
-
-leftHand.position.set(
-    -0.65,
-    0.78,
-    0
-);
-
-player.add(leftHand);
-
-const rightHand = new THREE.Mesh(
-    handGeometry,
-    makeMaterial(0xc98f68)
-);
-
-rightHand.position.set(
-    0.65,
-    0.78,
-    0
-);
-
-player.add(rightHand);
-
-// =====================================================
-// LEGS
-// =====================================================
-
-const thighGeometry =
-    new THREE.CylinderGeometry(
-        0.18,
-        0.20,
-        0.62,
-        8
-    );
-
-const shinGeometry =
-    new THREE.CylinderGeometry(
-        0.14,
-        0.17,
-        0.62,
-        8
-    );
-
-// LEFT LEG
-
-const leftThigh = new THREE.Mesh(
-    thighGeometry,
-    makeMaterial(0x20252d)
-);
-
-leftThigh.position.set(
-    -0.23,
-    0.65,
-    0
-);
-
-player.add(leftThigh);
-
-const leftShin = new THREE.Mesh(
-    shinGeometry,
-    makeMaterial(0x20252d)
-);
-
-leftShin.position.set(
-    -0.23,
-    0.25,
-    0
-);
-
-player.add(leftShin);
-
-// RIGHT LEG
-
-const rightThigh = new THREE.Mesh(
-    thighGeometry,
-    makeMaterial(0x20252d)
-);
-
-rightThigh.position.set(
-    0.23,
-    0.65,
-    0
-);
-
-player.add(rightThigh);
-
-const rightShin = new THREE.Mesh(
-    shinGeometry,
-    makeMaterial(0x20252d)
-);
-
-rightShin.position.set(
-    0.23,
-    0.25,
-    0
-);
-
-player.add(rightShin);
-
-// =====================================================
-// SHOES
-// =====================================================
-
-const shoeGeometry =
-    new THREE.BoxGeometry(
-        0.34,
-        0.18,
-        0.55
-    );
-
-const leftShoe = new THREE.Mesh(
-    shoeGeometry,
-    makeMaterial(0x101010)
-);
-
-leftShoe.position.set(
-    -0.23,
-    0.09,
-    -0.10
-);
-
-player.add(leftShoe);
-
-const rightShoe = new THREE.Mesh(
-    shoeGeometry,
-    makeMaterial(0x101010)
-);
-
-rightShoe.position.set(
-    0.23,
-    0.09,
-    -0.10
-);
-
-player.add(rightShoe);
-
-// =====================================================
-// PLAYER START
-// =====================================================
 
 player.position.set(
     0,
@@ -503,6 +146,172 @@ player.position.set(
 );
 
 scene.add(player);
+
+// =====================================================
+// GLB CHARACTER
+// =====================================================
+
+// IMPORTANT:
+// Put your GLB here:
+//
+// assets/player.glb
+
+const MODEL_URL = "./assets/player.glb";
+
+const loader = new GLTFLoader();
+
+let character = null;
+let mixer = null;
+
+const animations = {};
+
+let currentAnimation = null;
+
+// =====================================================
+// LOAD CHARACTER
+// =====================================================
+
+loader.load(
+
+    MODEL_URL,
+
+    function (gltf) {
+
+        character = gltf.scene;
+
+        // Model size
+        character.scale.set(
+            1,
+            1,
+            1
+        );
+
+        // If your model faces backwards,
+// change this to Math.PI
+        character.rotation.y = Math.PI;
+
+        player.add(character);
+
+        // =================================================
+        // ANIMATIONS
+        // =================================================
+
+        if (gltf.animations.length > 0) {
+
+            mixer = new THREE.AnimationMixer(
+                character
+            );
+
+            gltf.animations.forEach(
+                (clip) => {
+
+                    animations[
+                        clip.name.toLowerCase()
+                    ] = mixer.clipAction(clip);
+                }
+            );
+
+            console.log(
+                "Animations found:",
+                gltf.animations.map(
+                    a => a.name
+                )
+            );
+
+            // Try idle first
+            playAnimation(
+                findAnimation([
+                    "idle",
+                    "standing",
+                    "breathing"
+                ])
+            );
+        }
+
+        console.log(
+            "Character loaded successfully."
+        );
+    },
+
+    function (progress) {
+
+        if (progress.total > 0) {
+
+            console.log(
+                "Character loading:",
+                Math.round(
+                    progress.loaded /
+                    progress.total *
+                    100
+                ) + "%"
+            );
+        }
+    },
+
+    function (error) {
+
+        console.error(
+            "CHARACTER LOAD ERROR:",
+            error
+        );
+
+        console.log(
+            "Make sure assets/player.glb exists."
+        );
+    }
+);
+
+// =====================================================
+// FIND ANIMATION
+// =====================================================
+
+function findAnimation(names) {
+
+    for (const name of names) {
+
+        if (animations[name]) {
+            return animations[name];
+        }
+    }
+
+    // If no matching name,
+// use first available animation
+
+    const keys = Object.keys(animations);
+
+    if (keys.length > 0) {
+        return animations[keys[0]];
+    }
+
+    return null;
+}
+
+// =====================================================
+// PLAY ANIMATION
+// =====================================================
+
+function playAnimation(action) {
+
+    if (!action) {
+        return;
+    }
+
+    if (currentAnimation === action) {
+        return;
+    }
+
+    if (currentAnimation) {
+
+        currentAnimation.fadeOut(0.2);
+    }
+
+    action
+        .reset()
+        .fadeIn(0.2)
+        .play();
+
+    currentAnimation = action;
+}
 
 // =====================================================
 // CONTROLS
@@ -515,6 +324,10 @@ window.addEventListener(
     (event) => {
 
         keys[event.key.toLowerCase()] = true;
+
+        if (event.key === " ") {
+            event.preventDefault();
+        }
     }
 );
 
@@ -527,54 +340,85 @@ window.addEventListener(
 );
 
 // =====================================================
-// MOVEMENT
+// PLAYER MOVEMENT
 // =====================================================
 
 let velocityY = 0;
 let grounded = true;
 
-const speed = 0.13;
+const walkSpeed = 0.09;
+const runSpeed = 0.16;
+
 const gravity = -0.015;
 const jumpPower = 0.34;
 
-function updatePlayer() {
+function updatePlayer(delta) {
 
     let moving = false;
 
-    // Forward
+    // ---------------------------------------------
+    // SPEED
+    // ---------------------------------------------
+
+    let speed = walkSpeed;
+
+    if (keys["shift"]) {
+        speed = runSpeed;
+    }
+
+    // ---------------------------------------------
+    // FORWARD
+    // ---------------------------------------------
+
     if (keys["w"]) {
 
         player.translateZ(-speed);
+
         moving = true;
     }
 
-    // Back
+    // ---------------------------------------------
+    // BACKWARD
+    // ---------------------------------------------
+
     if (keys["s"]) {
 
         player.translateZ(speed);
+
         moving = true;
     }
 
-    // Turn left
+    // ---------------------------------------------
+    // TURN
+    // ---------------------------------------------
+
     if (keys["a"]) {
 
         player.rotation.y += 0.045;
     }
 
-    // Turn right
     if (keys["d"]) {
 
         player.rotation.y -= 0.045;
     }
 
-    // Jump
-    if (keys[" "] && grounded) {
+    // ---------------------------------------------
+    // JUMP
+    // ---------------------------------------------
+
+    if (
+        keys[" "] &&
+        grounded
+    ) {
 
         velocityY = jumpPower;
         grounded = false;
     }
 
-    // Gravity
+    // ---------------------------------------------
+    // GRAVITY
+    // ---------------------------------------------
+
     velocityY += gravity;
 
     player.position.y += velocityY;
@@ -582,62 +426,73 @@ function updatePlayer() {
     if (player.position.y <= 0) {
 
         player.position.y = 0;
+
         velocityY = 0;
+
         grounded = true;
     }
 
-    // =================================================
-    // WALK ANIMATION
-    // =================================================
+    // ---------------------------------------------
+    // ANIMATIONS
+    // ---------------------------------------------
 
-    if (moving && grounded) {
+    if (mixer) {
 
-        const walk =
-            Math.sin(Date.now() * 0.014) * 0.45;
+        if (moving) {
 
-        leftThigh.rotation.x = walk;
-        rightThigh.rotation.x = -walk;
+            if (keys["shift"]) {
 
-        leftShin.rotation.x = -walk * 0.5;
-        rightShin.rotation.x = walk * 0.5;
+                playAnimation(
+                    findAnimation([
+                        "run",
+                        "running",
+                        "sprint"
+                    ])
+                );
 
-        leftUpperArm.rotation.x = -walk * 0.7;
-        rightUpperArm.rotation.x = walk * 0.7;
+            } else {
 
-        leftForearm.rotation.x = -walk * 0.5;
-        rightForearm.rotation.x = walk * 0.5;
+                playAnimation(
+                    findAnimation([
+                        "walk",
+                        "walking"
+                    ])
+                );
+            }
 
-    } else {
+        } else {
 
-        leftThigh.rotation.x = 0;
-        rightThigh.rotation.x = 0;
+            playAnimation(
+                findAnimation([
+                    "idle",
+                    "standing",
+                    "breathing"
+                ])
+            );
+        }
 
-        leftShin.rotation.x = 0;
-        rightShin.rotation.x = 0;
-
-        leftUpperArm.rotation.x = 0;
-        rightUpperArm.rotation.x = 0;
-
-        leftForearm.rotation.x = 0;
-        rightForearm.rotation.x = 0;
+        mixer.update(delta);
     }
 }
 
 // =====================================================
-// THIRD-PERSON CAMERA
+// THIRD PERSON CAMERA
 // =====================================================
 
-const cameraTarget = new THREE.Vector3();
 const desiredCamera = new THREE.Vector3();
+const cameraTarget = new THREE.Vector3();
 
 function updateCamera() {
 
-    // Character ke peeche camera
+    // Camera distance behind character
+
     const offset = new THREE.Vector3(
         0,
-        3.8,
-        6.8
+        3.4,
+        6.5
     );
+
+    // Follow player's rotation
 
     offset.applyAxisAngle(
         new THREE.Vector3(0, 1, 0),
@@ -650,10 +505,14 @@ function updateCamera() {
 
     desiredCamera.add(offset);
 
+    // Smooth camera
+
     camera.position.lerp(
         desiredCamera,
         0.10
     );
+
+    // Look at upper body
 
     cameraTarget.set(
         player.position.x,
@@ -661,8 +520,16 @@ function updateCamera() {
         player.position.z
     );
 
-    camera.lookAt(cameraTarget);
+    camera.lookAt(
+        cameraTarget
+    );
 }
+
+// =====================================================
+// CLOCK
+// =====================================================
+
+const clock = new THREE.Clock();
 
 // =====================================================
 // GAME LOOP
@@ -672,7 +539,10 @@ function animate() {
 
     requestAnimationFrame(animate);
 
-    updatePlayer();
+    const delta = clock.getDelta();
+
+    updatePlayer(delta);
+
     updateCamera();
 
     renderer.render(
